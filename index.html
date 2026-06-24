@@ -498,7 +498,7 @@ footer{background:var(--surface);border-top:1px solid var(--line);text-align:cen
 // ─────────────────────────────────────────
 // CONFIG
 // ─────────────────────────────────────────
-var API_URL = 'https://script.google.com/macros/s/AKfycbwCxx65jrHGLX0P4jN1gP04Np1JEEinB9x4DMA2cPJ7f67eedE2Tt9FOhgFec8t2GDb/exec';
+var API_URL = 'https://script.google.com/macros/s/AKfycbwWwt4tbnkNLWpvgBdunSjiD052SSK5aIOmkWV1nTz2rOnbVIg5jJWxmUzFe_OVRINb/exec';
 var COMMON_TAGS = ['HubSpot','Deals','Pipeline','Training','Troubleshooting','Parent communication','Standards','Funding','Onboarding','Public Sector'];
 
 var auth = null;
@@ -585,8 +585,11 @@ function render(){
   var q=(document.getElementById('sside').value||'').toLowerCase().trim();
   var box=document.getElementById('policies');
   var items=data.policies.filter(p=>{
+    // Handle Category Filter Selection
     if(activeFilter && p.category!==activeFilter && !(p.tags||[]).includes(activeFilter)) return false;
+    // Handle Left Tag Cloud Cloud Selection
     if(activeTag && !(p.tags||[]).includes(activeTag)) return false;
+    
     if(q){
       var hay=(p.title+' '+p.summary+' '+(p.detailsHtml||'')+' '+(p.tags||[]).join(' ')+' '+(p.category||'')).toLowerCase();
       if(!hay.includes(q)) return false;
@@ -615,7 +618,7 @@ function renderPolicy(p){
   var pbs=(data.playbooks||[]).filter(pb=>pb.policyId===p.id);
   var catBadge=p.category?'<span class="badge '+(p.category.includes('CS')?'blue':p.category.includes('Template')||p.category.includes('FAQ')?'gold':'')+'">'+esc(p.category)+'</span>':'';
   var tagBadges=(p.tags||[]).map(t=>'<span class="badge '+badgeCls(t)+'">'+esc(t)+'</span>').join('');
-  var adminBtn=auth&&auth.role==='admin'?'<button class="btn-s" style="font-size:12px;padding:5px 10px;margin-left:8px;" data-action="edit" data-id="'+p.id+'">Edit</button>':'';
+  var adminBtn=auth&&auth.role==='admin'?'<button class="btn-s" style="font-size:12px;padding:5px 10px;margin-left:8px;" data-action="edit" data-id="'+p.id+'">Edit</button><button class="btn-s" style="font-size:12px;padding:5px 10px;margin-left:4px;color:red;border-color:red;background:none;cursor:pointer;" onclick="deletePolicy(\''+p.id+'\')">Delete</button>':'';
   var pbBtn=pbs.length>0
     ?'<button class="pb-button" data-action="pblist" data-id="'+p.id+'"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Open Playbook <span class="pb-count">'+pbs.length+'</span></button>'
     :(auth&&auth.role==='admin'?'<button class="pb-button" style="background:rgba(107,26,58,.15);color:var(--plum-d);" data-action="addpb" data-id="'+p.id+'"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add playbook</button>':'');
@@ -670,9 +673,11 @@ function renderComment(c){
       '<option value="answered"'+(statusClass==='answered'?' selected':'')+'>Answered</option>'+
       '<option value="closed"'+(statusClass==='closed'?' selected':'')+'>Closed</option>'+
       '</select>';
-    var inp='<input data-clink="'+c.id+'" type="text" placeholder="Policy ID that answers this (optional)" value="'+esc(c.answerPolicyId||'')+'">';
+    var inp='<input data-clink="'+c.id+'" type="text" placeholder="Policy ID" value="'+esc(c.answerPolicyId||'')+'">';
     var btn='<button data-action="updatecomment" data-id="'+c.id+'">Update</button>';
-    adminPanel='<div class="c-admin visible">'+sel+inp+btn+'</div>';
+    // ADDED: Delete button for administrative management
+    var delBtn='<button style="margin-left:8px;background:none;border:1px solid red;color:red;padding:4px 8px;border-radius:4px;cursor:pointer;" onclick="deleteComment(\''+c.id+'\')">Delete Note</button>';
+    adminPanel='<div class="c-admin visible">'+sel+inp+btn+delBtn+'</div>';
   }
   return '<div class="citem '+statusClass+'" id="ci-'+c.id+'">'+
     '<div class="c-top"><span class="c-who">'+esc(c.name)+'</span>'+
@@ -721,7 +726,23 @@ function openGeneralNote(){
     alert('Note cancelled (name required).');
     return;
   }
+
+function deleteComment(cid) {
+  if (!auth || auth.role !== 'admin') return;
+  if (!confirm('Remove this question/note from the log permanently?')) return;
   
+  api({ action: 'updateComment', username: auth.username, password: auth.password, commentId: cid, status: 'closed', deletePermanently: true }, function(res) {
+    if (res.ok) {
+      var idx = data.comments.findIndex(c => c.id === cid);
+      if (idx >= 0) data.comments.splice(idx, 1);
+      if (document.getElementById('faqTab').style.display === 'block') {
+        renderFaqPanelLayout();
+      } else {
+        render();
+      }
+    }
+  });
+}
   // Provide immediate visual confirmation that processing has started
   console.log('Sending general note to backend...');
   
@@ -814,6 +835,9 @@ function openAdd(){
   document.getElementById('ea-details').innerHTML='';
   document.getElementById('ea-todo').innerHTML='';
   document.getElementById('add-err').textContent='';
+  // Clear the toolbars first to prevent duplicate rows
+  document.getElementById('tb-details').innerHTML='';
+  document.getElementById('tb-todo').innerHTML='';
   buildToolbar('tb-details','ea-details');
   buildToolbar('tb-todo','ea-todo');
   // quick tags
@@ -822,6 +846,10 @@ function openAdd(){
   document.getElementById('addOverlay').classList.add('open');
 }
 function openEditPolicy(pid){
+  if (!auth || auth.role !== 'admin') {
+    alert('Unauthorized: Only administrators can edit policies.');
+    return;
+  }
   var p=data.policies.find(x=>x.id===pid); if(!p) return;
   editingPolicyId=pid;
   document.getElementById('addModalTitle').textContent='Edit policy';
@@ -834,8 +862,14 @@ function openEditPolicy(pid){
   document.getElementById('ea-details').innerHTML=p.detailsHtml||'';
   document.getElementById('ea-todo').innerHTML=p.todoHtml||'';
   document.getElementById('add-err').textContent='';
+  
+  // FIXED: Clear the toolbars first to prevent double toolbars from rendering
+  document.getElementById('tb-details').innerHTML='';
+  document.getElementById('tb-todo').innerHTML='';
+  
   buildToolbar('tb-details','ea-details');
   buildToolbar('tb-todo','ea-todo');
+  
   var qt=COMMON_TAGS.map(function(t){return '<span class="qtag" style="font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;" data-action="qtag" data-tag="'+t+'">'+t+'</span>';}).join('');
   document.getElementById('qTags').innerHTML=qt;
   document.getElementById('addOverlay').classList.add('open');
@@ -871,7 +905,28 @@ function savePolicy(){
     closeAdd(); loadData();
   });
 }
-
+function deletePolicy(pid) {
+  if (!auth || auth.role !== 'admin') {
+    alert('Unauthorized.');
+    return;
+  }
+  if (!confirm('Are you absolutely sure you want to delete this policy? This cannot be undone.')) return;
+  
+  api({ 
+    action: 'editPolicy', 
+    username: auth.username, 
+    password: auth.password, 
+    policyId: pid, 
+    deletePermanently: true 
+  }).then(res => {
+    if (res.ok) {
+      alert('Policy successfully deleted.');
+      loadData();
+    } else {
+      alert('Error deleting policy: ' + (res.error || 'Unknown issue.'));
+    }
+  });
+}
 // ── PLAYBOOKS ──
 function renderPbGrid(){
   var grid=document.getElementById('pbGrid');
