@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sales &amp; CS Knowledge Base — Hatching Dragons</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f4ef;
+    --surface: #ffffff;
+    --ink: #1f2a28;
+    --muted: #6b746f;
+    --line: #e4e0d7;
+    --accent: #1f7a63;
+    --accent-soft: #e6f1ed;
+    --accent-ink: #12513f;
+    --danger: #b3402f;
+    --radius: 12px;
+    --shadow: 0 1px 2px rgba(31,42,40,.05), 0 4px 16px rgba(31,42,40,.04);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  button { font-family: inherit; cursor: pointer; }
+  input, textarea { font-family: inherit; font-size: 15px; }
+  a { color: var(--accent-ink); }
+
+  /* ---------- LOGIN ---------- */
+  #login {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+  }
+  .login-card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 2.25rem; width: 100%; max-width: 380px;
+  }
+  .login-card h1 { font-size: 20px; font-weight: 600; margin: 0 0 4px; }
+  .login-card p.sub { color: var(--muted); margin: 0 0 1.75rem; font-size: 14px; }
+  .field { margin-bottom: 1rem; }
+  .field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 5px; color: var(--muted); }
+  .field input, .field textarea, .field select {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--line);
+    border-radius: 8px; background: #fff; color: var(--ink); transition: border-color .15s;
+  }
+  .field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+  .btn {
+    background: var(--accent); color: #fff; border: none; padding: 11px 18px;
+    border-radius: 8px; font-weight: 500; font-size: 15px; width: 100%;
+  }
+  .btn:hover { background: #1a6a56; }
+  .btn.secondary { background: transparent; color: var(--ink); border: 1px solid var(--line); width: auto; }
+  .btn.secondary:hover { background: var(--bg); }
+  .btn.small { width: auto; padding: 8px 14px; font-size: 14px; }
+  .error { color: var(--danger); font-size: 13px; margin-top: 8px; min-height: 18px; }
+
+  /* ---------- APP SHELL ---------- */
+  #app { display: none; }
+  header.topbar {
+    background: var(--surface); border-bottom: 1px solid var(--line);
+    padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .brand { display: flex; align-items: baseline; gap: 10px; }
+  .brand strong { font-size: 17px; font-weight: 600; }
+  .brand span { color: var(--muted); font-size: 13px; }
+  .topbar-right { display: flex; align-items: center; gap: 14px; font-size: 14px; color: var(--muted); }
+
+  .layout { display: grid; grid-template-columns: 240px 1fr; gap: 28px; max-width: 1040px; margin: 28px auto; padding: 0 24px; }
+  @media (max-width: 760px) { .layout { grid-template-columns: 1fr; } }
+
+  /* Sidebar */
+  .sidebar .search { margin-bottom: 22px; }
+  .sidebar .search input { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; }
+  .sidebar .search input:focus { outline: none; border-color: var(--accent); }
+  .side-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 0 0 10px; }
+  .tag-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 22px; }
+  .tag {
+    font-size: 13px; padding: 4px 11px; border-radius: 999px; border: 1px solid var(--line);
+    background: #fff; color: var(--ink); cursor: pointer; transition: all .12s;
+  }
+  .tag:hover { border-color: var(--accent); }
+  .tag.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* Policy cards */
+  .policy {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 22px 24px; margin-bottom: 18px;
+  }
+  .policy h2 { font-size: 18px; font-weight: 600; margin: 0 0 6px; }
+  .meta { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .pill { font-size: 12px; padding: 3px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-ink); font-weight: 500; }
+  .summary { margin: 0 0 12px; }
+  .section-h { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .03em; margin: 14px 0 6px; }
+  .detail-body { white-space: pre-wrap; }
+  .todo { background: #fbf3e6; border-left: 3px solid #d39a2f; padding: 10px 14px; border-radius: 0 8px 8px 0; margin: 6px 0; }
+
+  .comments { border-top: 1px solid var(--line); margin-top: 18px; padding-top: 14px; }
+  .comment { font-size: 14px; margin-bottom: 10px; }
+  .comment .who { font-weight: 500; }
+  .comment .when { color: var(--muted); font-size: 12px; margin-left: 8px; }
+  .comment .text { margin: 2px 0 0; }
+  .comment-form { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .comment-form textarea { width: 100%; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; resize: vertical; min-height: 56px; }
+  .comment-form textarea:focus { outline: none; border-color: var(--accent); }
+  .comment-form .row { display: flex; gap: 8px; align-items: center; }
+  .comment-form .row input { flex: 1; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; }
+
+  .empty { color: var(--muted); text-align: center; padding: 48px 0; }
+
+  /* Modal */
+  .overlay {
+    display: none; position: fixed; inset: 0; background: rgba(31,42,40,.4);
+    z-index: 50; align-items: flex-start; justify-content: center; padding: 40px 16px; overflow-y: auto;
+  }
+  .overlay.open { display: flex; }
+  .modal { background: var(--surface); border-radius: var(--radius); width: 100%; max-width: 560px; padding: 26px 28px; box-shadow: var(--shadow); }
+  .modal h2 { font-size: 19px; font-weight: 600; margin: 0 0 18px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+  .quick-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .quick-tags .tag { font-size: 12px; }
+  .hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="login">
+  <div class="login-card">
+    <h1>Sales &amp; CS Knowledge Base</h1>
+    <p class="sub">Hatching Dragons · team sign in</p>
+    <div class="field">
+      <label for="lg-user">Username</label>
+      <input id="lg-user" type="text" autocomplete="username">
+    </div>
+    <div class="field">
+      <label for="lg-pass">Password</label>
+      <input id="lg-pass" type="password" autocomplete="current-password">
+    </div>
+    <button class="btn" onclick="login()">Sign in</button>
+    <div class="error" id="lg-error"></div>
+  </div>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <strong>Knowledge Base</strong>
+      <span>Sales &amp; CS</span>
+    </div>
+    <div class="topbar-right">
+      <span id="whoami"></span>
+      <button class="btn secondary small" id="addBtn" style="display:none" onclick="openAdd()">+ Add policy</button>
+      <button class="btn secondary small" onclick="logout()">Sign out</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="search">
+        <input id="searchBox" type="search" placeholder="Search policies…" oninput="render()">
+      </div>
+      <p class="side-label">Filter by tag</p>
+      <div class="tag-list" id="tagList"></div>
+    </aside>
+
+    <main>
+      <div id="policies"></div>
+    </main>
+  </div>
+</div>
+
+<!-- ============ ADD POLICY MODAL ============ -->
+<div class="overlay" id="addOverlay">
+  <div class="modal">
+    <h2>Add a policy</h2>
+    <div class="field">
+      <label>Policy name</label>
+      <input id="f-title" type="text" placeholder="e.g. Deal status update timing">
+    </div>
+    <div class="field">
+      <label>Effective date</label>
+      <input id="f-date" type="text" placeholder="e.g. 24 Jun 2026">
+    </div>
+    <div class="field">
+      <label>Tags</label>
+      <input id="f-tags" type="text" placeholder="comma separated, e.g. HubSpot, Deals, Pipeline">
+      <div class="quick-tags" id="quickTags"></div>
+      <p class="hint">Click a tag above to add it, or type your own.</p>
+    </div>
+    <div class="field">
+      <label>Summary <span style="font-weight:400;color:var(--muted)">(one or two plain-language sentences)</span></label>
+      <textarea id="f-summary" rows="2"></textarea>
+    </div>
+    <div class="field">
+      <label>Details</label>
+      <textarea id="f-details" rows="5" placeholder="The full policy. Use new lines or dashes for steps."></textarea>
+    </div>
+    <div class="field">
+      <label>What you need to do <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+      <textarea id="f-todo" rows="2"></textarea>
+    </div>
+    <div class="field">
+      <label>Related links / who to ask <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+      <input id="f-links" type="text" placeholder="e.g. Questions? Contact Cel">
+    </div>
+    <div class="error" id="add-error"></div>
+    <div class="modal-actions">
+      <button class="btn secondary" onclick="closeAdd()">Cancel</button>
+      <button class="btn small" id="savePolicyBtn" onclick="savePolicy()">Save policy</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===========================================================================
+// CONFIG — paste your deployed Apps Script web app URL between the quotes.
+// It looks like: https://script.google.com/macros/s/AKfy....../exec
+// ===========================================================================
+var API_URL = 'https://script.google.com/macros/s/AKfycbzZCYyABTPgGnoitu5NbGo4zfYdnjoBOof23cv0xeXzKl2cpKe0r7okR8N4xeI19OSe/exec';
+
+var COMMON_TAGS = ['HubSpot', 'Deals', 'Pipeline', 'Training', 'Troubleshooting', 'Parent communication', 'Standards'];
+
+var auth = null;          // { username, password, role, name }
+var data = { policies: [], comments: [] };
+var activeTag = null;
+
+// ---- API helper: POST only, no custom headers (keeps it a "simple" request,
+//      which avoids cross-origin preflight problems with Apps Script) ----
+function api(payload) {
+  return fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) })
+    .then(function (r) { return r.json(); });
+}
+
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// ---------------------------------------------------------------- LOGIN
+function login() {
+  var u = document.getElementById('lg-user').value.trim();
+  var p = document.getElementById('lg-pass').value;
+  var err = document.getElementById('lg-error');
+  err.textContent = '';
+  if (!u || !p) { err.textContent = 'Enter your username and password.'; return; }
+  api({ action: 'login', username: u, password: p }).then(function (res) {
+    if (!res.ok) { err.textContent = res.error || 'Sign in failed.'; return; }
+    auth = { username: u, password: p, role: res.role, name: res.name };
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('whoami').textContent = res.name;
+    if (res.role === 'admin') document.getElementById('addBtn').style.display = 'inline-block';
+    loadData();
+  }).catch(function () { err.textContent = 'Could not reach the server. Check the link.'; });
+}
+
+function logout() {
+  auth = null;
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login').style.display = 'flex';
+  document.getElementById('lg-pass').value = '';
+}
+
+// ---------------------------------------------------------------- DATA
+function loadData() {
+  document.getElementById('policies').innerHTML = '<p class="empty">Loading…</p>';
+  api({ action: 'getData' }).then(function (res) {
+    if (!res.ok) { document.getElementById('policies').innerHTML = '<p class="empty">Could not load.</p>'; return; }
+    data = res;
+    buildTagList();
+    render();
+  });
+}
+
+function allTags() {
+  var set = {};
+  data.policies.forEach(function (p) { (p.tags || []).forEach(function (t) { set[t] = true; }); });
+  return Object.keys(set).sort();
+}
+
+function buildTagList() {
+  var list = document.getElementById('tagList');
+  var tags = allTags();
+  var html = '<span class="tag ' + (activeTag ? '' : 'active') + '" onclick="setTag(null)">All</span>';
+  tags.forEach(function (t) {
+    html += '<span class="tag ' + (activeTag === t ? 'active' : '') + '" onclick="setTag(\'' + esc(t).replace(/'/g, "\\'") + '\')">' + esc(t) + '</span>';
+  });
+  list.innerHTML = html;
+}
+
+function setTag(t) { activeTag = t; buildTagList(); render(); }
+
+// ---------------------------------------------------------------- RENDER
+function render() {
+  var q = document.getElementById('searchBox').value.toLowerCase().trim();
+  var box = document.getElementById('policies');
+  var items = data.policies.filter(function (p) {
+    if (activeTag && (p.tags || []).indexOf(activeTag) === -1) return false;
+    if (q) {
+      var hay = (p.title + ' ' + p.summary + ' ' + p.details + ' ' + (p.tags || []).join(' ')).toLowerCase();
+      if (hay.indexOf(q) === -1) return false;
+    }
+    return true;
+  });
+
+  if (!items.length) {
+    box.innerHTML = '<p class="empty">No policies yet. ' +
+      (auth && auth.role === 'admin' ? 'Click “+ Add policy” to create the first one.' : 'Check back soon.') + '</p>';
+    return;
+  }
+
+  box.innerHTML = items.map(renderPolicy).join('');
+}
+
+function renderPolicy(p) {
+  var comments = data.comments.filter(function (c) { return c.policyId === p.id; });
+  var pills = (p.tags || []).map(function (t) { return '<span class="pill">' + esc(t) + '</span>'; }).join('');
+
+  var commentHtml = comments.map(function (c) {
+    return '<div class="comment"><span class="who">' + esc(c.name) + '</span>' +
+      '<span class="when">' + esc(c.timestamp) + '</span>' +
+      '<p class="text">' + esc(c.comment) + '</p></div>';
+  }).join('');
+
+  return '' +
+    '<article class="policy">' +
+      '<h2>' + esc(p.title) + '</h2>' +
+      '<div class="meta">Effective ' + esc(p.effectiveDate) + ' · Updated ' + esc(p.lastUpdated) + '</div>' +
+      (pills ? '<div class="pills">' + pills + '</div>' : '') +
+      (p.summary ? '<p class="summary">' + esc(p.summary) + '</p>' : '') +
+      (p.details ? '<div class="section-h">Details</div><div class="detail-body">' + esc(p.details) + '</div>' : '') +
+      (p.todo ? '<div class="section-h">What you need to do</div><div class="todo">' + esc(p.todo) + '</div>' : '') +
+      (p.links ? '<div class="section-h">Related / who to ask</div><div class="detail-body">' + esc(p.links) + '</div>' : '') +
+      '<div class="comments">' +
+        '<div class="section-h">Notes &amp; questions</div>' +
+        (commentHtml || '<p class="hint" style="margin:0 0 8px">No notes yet.</p>') +
+        '<div class="comment-form">' +
+          '<textarea id="ct-' + p.id + '" placeholder="Add a note, question or suggestion…"></textarea>' +
+          '<div class="row">' +
+            '<input id="cn-' + p.id + '" type="text" placeholder="Your name" value="' + esc(auth ? auth.name : '') + '">' +
+            '<button class="btn small" onclick="addComment(\'' + p.id + '\')">Send</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</article>';
+}
+
+// ---------------------------------------------------------------- COMMENT
+function addComment(policyId) {
+  var name = document.getElementById('cn-' + policyId).value.trim();
+  var text = document.getElementById('ct-' + policyId).value.trim();
+  if (!name || !text) return;
+  var policy = data.policies.filter(function (p) { return p.id === policyId; })[0];
+  api({
+    action: 'addComment',
+    policyId: policyId,
+    policyTitle: policy ? policy.title : '',
+    name: name, comment: text
+  }).then(function (res) {
+    if (!res.ok) { alert(res.error || 'Could not send.'); return; }
+    data.comments.push(res.comment);
+    render();
+  });
+}
+
+// ---------------------------------------------------------------- ADD POLICY
+function openAdd() {
+  document.getElementById('add-error').textContent = '';
+  ['f-title', 'f-date', 'f-tags', 'f-summary', 'f-details', 'f-todo', 'f-links'].forEach(function (id) {
+    document.getElementById(id).value = '';
+  });
+  var qt = COMMON_TAGS.map(function (t) {
+    return '<span class="tag" onclick="addQuickTag(\'' + t + '\')">' + t + '</span>';
+  }).join('');
+  document.getElementById('quickTags').innerHTML = qt;
+  document.getElementById('addOverlay').classList.add('open');
+}
+function closeAdd() { document.getElementById('addOverlay').classList.remove('open'); }
+
+function addQuickTag(t) {
+  var input = document.getElementById('f-tags');
+  var current = input.value.split(',').map(function (x) { return x.trim(); }).filter(Boolean);
+  if (current.indexOf(t) === -1) current.push(t);
+  input.value = current.join(', ');
+}
+
+function savePolicy() {
+  var err = document.getElementById('add-error');
+  var title = document.getElementById('f-title').value.trim();
+  if (!title) { err.textContent = 'A policy name is required.'; return; }
+  var btn = document.getElementById('savePolicyBtn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  api({
+    action: 'addPolicy',
+    username: auth.username, password: auth.password,
+    title: title,
+    effectiveDate: document.getElementById('f-date').value.trim(),
+    tags: document.getElementById('f-tags').value.trim(),
+    summary: document.getElementById('f-summary').value.trim(),
+    details: document.getElementById('f-details').value.trim(),
+    todo: document.getElementById('f-todo').value.trim(),
+    links: document.getElementById('f-links').value.trim()
+  }).then(function (res) {
+    btn.disabled = false; btn.textContent = 'Save policy';
+    if (!res.ok) { err.textContent = res.error || 'Could not save.'; return; }
+    closeAdd();
+    loadData();
+  });
+}
+
+// Enter key submits login
+document.getElementById('lg-pass').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') login();
+});
+</script>
+</body>
+</html>
