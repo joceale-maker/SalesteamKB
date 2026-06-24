@@ -37,14 +37,23 @@ a{color:var(--plum);text-decoration:none;}
 /* ── NAV ── */
 #app{display:none;}
 nav.tn{background:var(--plum-d);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(74,18,40,.3);}
-.ni{max-width:1080px;margin:0 auto;padding:0 20px;display:flex;align-items:center;height:54px;gap:0;}
-.nl-logo{display:flex;align-items:center;gap:10px;flex-shrink:0;margin-right:8px;}
+
+/* CHANGED: Adjusted container spacing and flex wrapping behavior */
+.ni{max-width:1140px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:54px;gap:15px;}
+
+.nl-logo{display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .nl-logo img{height:34px;width:auto;}
 .nl-sn{color:rgba(255,255,255,.65);font-size:12px;font-weight:500;white-space:nowrap;border-left:1px solid rgba(255,255,255,.2);padding-left:10px;}
-.nlinks{display:flex;align-items:stretch;flex:1;overflow:hidden;}
-.nitem{display:flex;align-items:center;gap:4px;padding:0 12px;color:rgba(255,255,255,.75);font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .12s,border-color .12s;height:100%;}
+
+/* CHANGED: Removed overflow:hidden so 'Playbooks' displays completely */
+.nlinks{display:flex;align-items:stretch;gap:4px;height:100%;}
+
+.nitem{display:flex;align-items:center;gap:4px;padding:0 10px;color:rgba(255,255,255,.75);font-size:13px;font-weight:500;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .12s,border-color .12s;height:100%;}
 .nitem:hover,.nitem.on{color:#fff;border-bottom-color:var(--gold);}
-.nr{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0;}
+
+/* CHANGED: Ensured right group shrinks cleanly and keeps its distance */
+.nr{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+
 .nsrch{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:5px 12px;color:rgba(255,255,255,.65);font-size:13px;cursor:pointer;}
 .nsrch:hover{background:rgba(255,255,255,.18);color:#fff;}
 .nbtn{background:var(--gold);color:#fff;border:none;border-radius:6px;padding:6px 13px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;}
