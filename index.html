@@ -451,7 +451,7 @@ footer{background:var(--surface);border-top:1px solid var(--line);text-align:cen
 // ─────────────────────────────────────────
 // CONFIG
 // ─────────────────────────────────────────
-var API_URL = 'https://script.google.com/macros/s/AKfycbz5itbuXUXxB2h9feG3OFc3HnGcBpWJEWhT7WaYoNvRXeERrOt3D2-qFRZIIf_L-4Iw/exec';
+var API_URL = 'https://script.google.com/macros/s/AKfycbz5itbuXUXxB2h9feG30Fc3HnGcBpWJEWhT7WaYoNvRXeERr0t3D2-qFRZIIf_L-4Iw/exec';
 var COMMON_TAGS = ['HubSpot','Deals','Pipeline','Training','Troubleshooting','Parent communication','Standards','Funding','Onboarding','Public Sector'];
 
 var auth = null;
@@ -563,10 +563,10 @@ function renderPolicy(p){
   var pbs=(data.playbooks||[]).filter(pb=>pb.policyId===p.id);
   var catBadge=p.category?'<span class="badge '+(p.category.includes('CS')?'blue':p.category.includes('Template')||p.category.includes('FAQ')?'gold':'')+'">' +esc(p.category)+'</span>':'';
   var tagBadges=(p.tags||[]).map(t=>'<span class="badge '+badgeCls(t)+'">'+esc(t)+'</span>').join('');
-  var adminBtn=auth&&auth.role==='admin'?'<button class="btn-s" style="font-size:12px;padding:5px 10px;margin-left:8px;" onclick="openEditPolicy(''+p.id+'')">Edit</button>':'';
+  var adminBtn=auth&&auth.role==='admin'?'<button class="btn-s" style="font-size:12px;padding:5px 10px;margin-left:8px;" onclick="openEditPolicy('"+p.id+"')">Edit</button>':'';
   var pbBtn=pbs.length>0
-    ?'<button class="pb-button" onclick="openPbList(''+p.id+'')"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Open Playbook <span class="pb-count">'+pbs.length+'</span></button>'
-    :(auth&&auth.role==='admin'?'<button class="pb-button" style="background:rgba(107,26,58,.15);color:var(--plum-d);" onclick="openAddPlaybook(''+p.id+'')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add playbook</button>':'');
+    ?'<button class="pb-button" onclick="openPbList('"+p.id+"')"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Open Playbook <span class="pb-count">'+pbs.length+'</span></button>'
+    :(auth&&auth.role==='admin'?'<button class="pb-button" style="background:rgba(107,26,58,.15);color:var(--plum-d);" onclick="openAddPlaybook('"+p.id+"')"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Add playbook</button>':'');
 
   var commHtml=comments.map(c=>renderComment(c)).join('');
 
@@ -606,7 +606,7 @@ function renderComment(c){
   var statusLabel={pending:'Pending answer',answered:'Answered',closed:'Closed'}[statusClass]||'Pending';
   var dealHtml=c.dealName?'<div class="c-deal"><a href="'+esc(c.dealUrl||'#')+'" target="_blank">🔗 '+esc(c.dealName)+'</a></div>':'';
   var answeredLink=c.answerPolicyId&&c.answerPolicyTitle
-    ?'<a class="c-answered-link" href="#" onclick="jumpTo(''+c.answerPolicyId+'');return false;"><svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:none;stroke:#fff;stroke-width:2;"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg> Answer in: '+esc(c.answerPolicyTitle)+'</a>':'' ;
+    ?'<a class="c-answered-link" href="#" onclick="jumpTo('"+c.answerPolicyId+"');return false;"><svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:none;stroke:#fff;stroke-width:2;"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg> Answer in: '+esc(c.answerPolicyTitle)+'</a>':'' ;
   var adminPanel=auth&&auth.role==='admin'?`<div class="c-admin visible">
     <select id="cst-${c.id}" onchange="updateCommentStatus('${c.id}',this.value,document.getElementById('clink-${c.id}').value)">
       <option value="pending" ${statusClass==='pending'?'selected':''}>Pending</option>
@@ -733,7 +733,7 @@ function openAdd(){
   buildToolbar('tb-details','ea-details');
   buildToolbar('tb-todo','ea-todo');
   // quick tags
-  var qt=COMMON_TAGS.map(t=>'<span style="font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;" onclick="addQt(''+t+'')">'+ t+'</span>').join('');
+  var qt=COMMON_TAGS.map(t=>'<span style="font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;" onclick="addQt('"+t+"')">'+ t+'</span>').join('');
   document.getElementById('qTags').innerHTML=qt;
   document.getElementById('addOverlay').classList.add('open');
 }
@@ -752,7 +752,7 @@ function openEditPolicy(pid){
   document.getElementById('add-err').textContent='';
   buildToolbar('tb-details','ea-details');
   buildToolbar('tb-todo','ea-todo');
-  var qt=COMMON_TAGS.map(t=>'<span style="font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;" onclick="addQt(''+t+'')">'+ t+'</span>').join('');
+  var qt=COMMON_TAGS.map(t=>'<span style="font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer;" onclick="addQt('"+t+"')">'+ t+'</span>').join('');
   document.getElementById('qTags').innerHTML=qt;
   document.getElementById('addOverlay').classList.add('open');
 }
@@ -910,7 +910,7 @@ function renderSrch(){
     return hay.includes(q);
   });
   if(!r.length){box.innerHTML='<div class="srch-empty">No results for "'+esc(q)+'"</div>';return;}
-  box.innerHTML=r.map(p=>'<div class="sri" onclick="jumpTo(''+p.id+'')"><div class="sri-title">'+esc(p.title)+'</div><div class="sri-sub">'+(p.category?esc(p.category)+' · ':'')+esc((p.summary||'').substring(0,80))+'…</div></div>').join('');
+  box.innerHTML=r.map(p=>'<div class="sri" onclick="jumpTo('"+p.id+"')"><div class="sri-title">'+esc(p.title)+'</div><div class="sri-sub">'+(p.category?esc(p.category)+' · ':'')+esc((p.summary||'').substring(0,80))+'…</div></div>').join('');
 }
 function jumpTo(id){
   closeSrchBtn(); activeFilter=null; activeTag=null;
@@ -924,7 +924,7 @@ var ddTarget=null;
 function openDD(el,type){
   var menu=document.getElementById('ddMenu');
   var items=type==='sales'?[['Sales Process','Sales Process'],['Sales Policy','Sales Policy']]:[['CS Process','CS Process'],['CS Policy','CS Policy']];
-  menu.innerHTML=items.map(([l,f])=>'<div class="dd-item" onclick="setFilter(''+f+'',''+l+'')">'+l+'</div>').join('');
+  menu.innerHTML=items.map(([l,f])=>'<div class="dd-item" onclick="setFilter('"+f+"','"+l+"')">'+l+'</div>').join('');
   var r=el.getBoundingClientRect();
   menu.style.display='block'; menu.style.top=r.bottom+'px'; menu.style.left=r.left+'px'; ddTarget=el;
 }
