@@ -261,7 +261,7 @@ footer{background:var(--surface);border-top:1px solid var(--line);text-align:cen
     <p class="sub">Sales &amp; CS team</p>
     <div class="field"><label>Username</label><input id="lg-u" type="text" autocomplete="username" placeholder="Your username"></div>
     <div class="field"><label>Password</label><input id="lg-p" type="password" autocomplete="current-password" placeholder="Your password"></div>
-    <button class="btn-p" onclick="login()">Sign in</button>
+    <button class="btn-p" onclick="handleLogin()">Sign in</button>
     <div class="err" id="lg-err"></div>
   </div>
 </div>
@@ -512,7 +512,7 @@ function api(payload){ return fetch(API_URL,{method:'POST',body:JSON.stringify(p
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // ── LOGIN ──
-function login(){
+function handleLogin(){
   var u=document.getElementById('lg-u').value.trim(), p=document.getElementById('lg-p').value;
   var err=document.getElementById('lg-err'); err.textContent='';
   if(!u||!p){err.textContent='Enter your username and password.';return;}
