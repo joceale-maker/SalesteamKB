@@ -71,7 +71,7 @@ nav.tn{background:var(--plum-d);position:sticky;top:0;z-index:100;box-shadow:0 2
 .hshapes{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
 
 /* ── FILTER BAR ── */
-.fbar{background:var(--surface);border-bottom:1px solid var(--line);display:flex;padding:0 20px;overflow-x:auto;scrollbar-width:none;}
+.fbar{display:none !important;background:var(--surface);border-bottom:1px solid var(--line);display:flex;padding:0 20px;overflow-x:auto;scrollbar-width:none;}
 .fbar::-webkit-scrollbar{display:none;}
 .ftab{padding:13px 15px;font-size:13px;font-weight:500;color:#6a5040;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .12s,border-color .12s;flex-shrink:0;}
 .ftab:hover{color:var(--plum);}
@@ -269,16 +269,14 @@ footer{background:var(--surface);border-top:1px solid var(--line);text-align:cen
 <!-- ═══ APP ═══ -->
 <div id="app">
 <nav class="tn">
-  <div class="ni">
-    <div class="nl-logo"><img id="nav-logo" src="" alt="HD"><span class="nl-sn">Sales &amp; CS Hub</span></div>
-    <div class="nlinks">
-      <div class="nitem on" onclick="showTab('policies')">Home</div>
-      <div class="nitem" onclick="openDD(this,'sales')">Sales <svg viewBox="0 0 24 24" style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="6 9 12 15 18 9"/></svg></div>
-      <div class="nitem" onclick="openDD(this,'cs')">Customer Success <svg viewBox="0 0 24 24" style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="6 9 12 15 18 9"/></svg></div>
-      <div class="nitem" onclick="setFilter('Templates','Templates')">Templates</div>
-      <div class="nitem" onclick="setFilter('Important Links','Links')">Links</div>
-      <div class="nitem" onclick="showTab('playbooks')">Playbooks</div>
-    </div>
+ <div class="nlinks">
+  <div class="nitem on" onclick="showTab('policies'); setFilter(null,'All');">Home</div>
+  <div class="nitem" onclick="openDD(this,'sales')">Sales <svg viewBox="0 0 24 24" style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="6 9 12 15 18 9"/></svg></div>
+  <div class="nitem" onclick="openDD(this,'cs')">Customer Success <svg viewBox="0 0 24 24" style="width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;"><polyline points="6 9 12 15 18 9"/></svg></div>
+  <div class="nitem" onclick="setFilter('Templates','Templates')">Templates</div>
+  <div class="nitem" onclick="setFilter('Important Links','Links')">Links</div>
+  <div class="nitem" onclick="showTab('faqs')">FAQs</div>
+</div>
     <div class="nr">
       <div class="nsrch" onclick="openSrch()"><svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> Search</div>
       <span class="nwho" id="whoami"></span>
@@ -330,6 +328,27 @@ footer{background:var(--surface);border-top:1px solid var(--line);text-align:cen
     <div class="tcl" id="tagCloud"></div>
   </aside>
   <main>
+    <div id="homeToggleDashboard" style="margin-bottom: 24px;">
+  <p class="side-lbl">Main Topics</p>
+  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px;">
+    <div class="pb-card" onclick="setFilter('Sales Process','Sales Process')" style="border-left: 4px solid var(--plum); padding: 15px; background: #fff; cursor: pointer;">
+      <div class="pb-card-title" style="font-weight: bold; color: var(--plum-d);">Sales Processes</div>
+      <div class="pb-card-steps" style="font-size: 13px; color: var(--muted);">View standard operating workflows</div>
+    </div>
+    <div class="pb-card" onclick="setFilter('Sales Policy','Sales Policy')" style="border-left: 4px solid var(--plum-l); padding: 15px; background: #fff; cursor: pointer;">
+      <div class="pb-card-title" style="font-weight: bold; color: var(--plum-d);">Sales Policies</div>
+      <div class="pb-card-steps" style="font-size: 13px; color: var(--muted);">Rules and structural guidelines</div>
+    </div>
+    <div class="pb-card" onclick="setFilter('CS Process','CS Process')" style="border-left: 4px solid var(--olive); padding: 15px; background: #fff; cursor: pointer;">
+      <div class="pb-card-title" style="font-weight: bold; color: var(--plum-d);">CS Processes</div>
+      <div class="pb-card-steps" style="font-size: 13px; color: var(--muted);">Customer Success execution steps</div>
+    </div>
+    <div class="pb-card" onclick="setFilter('CS Policy','CS Policy')" style="border-left: 4px solid var(--olive-d); padding: 15px; background: #fff; cursor: pointer;">
+      <div class="pb-card-title" style="font-weight: bold; color: var(--plum-d);">CS Policies</div>
+      <div class="pb-card-steps" style="font-size: 13px; color: var(--muted);">Customer Success regulations</div>
+    </div>
+  </div>
+</div>
     <div id="policies"></div>
     <div class="cta">
       <svg class="bg" viewBox="0 0 300 80" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg"><ellipse cx="260" cy="20" rx="40" ry="65" fill="#8db547" opacity=".2" transform="rotate(-18 260 20)"/><path d="M220 35 Q238 12 254 33 Q270 54 258 78 Q246 102 226 94 Q206 86 204 64 Q202 42 220 35Z" fill="#c4984e" opacity=".2"/><ellipse cx="295" cy="68" rx="28" ry="46" fill="#8db547" opacity=".15" transform="rotate(16 295 68)"/></svg>
@@ -337,10 +356,28 @@ footer{background:var(--surface);border-top:1px solid var(--line);text-align:cen
       <button class="btn-gold" onclick="openGeneralNote()">Leave a note</button>
     </div>
   </main>
-</div>
+  </div>
 </div>
 
-<!-- PLAYBOOKS TAB -->
+<div id="faqTab" style="display:none; max-width:1080px; margin:0 auto; padding:28px 20px 60px;">
+  <div style="margin-bottom: 20px;">
+    <h2 style="font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;color:var(--plum-d);">FAQs & User Questions</h2>
+    <p style="font-size:14px;color:var(--muted);">Review internal knowledgebase articles and user questions submitted by the team.</p>
+  </div>
+  
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+    <div>
+      <h3 style="font-size:16px; font-weight:600; margin-bottom:12px; color:var(--ink); border-bottom: 2px solid var(--line); padding-bottom: 6px;">Standard FAQs</h3>
+      <div id="standardFaqContainer"></div>
+    </div>
+    
+    <div>
+      <h3 style="font-size:16px; font-weight:600; margin-bottom:12px; color:var(--ink); border-bottom: 2px solid var(--line); padding-bottom: 6px;">Questions Raised by Team</h3>
+      <div id="questionsRaisedContainer"></div>
+    </div>
+  </div>
+</div>
+
 <div id="pbTab">
   <div style="max-width:1080px;margin:0 auto;padding:28px 20px 60px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
@@ -504,10 +541,15 @@ document.getElementById('lg-p').addEventListener('keydown',e=>{if(e.key==='Enter
 // ── TABS ──
 function showTab(tab){
   document.getElementById('policiesTab').style.display = tab==='policies'?'block':'none';
-  document.getElementById('fbar').style.display = tab==='policies'?'flex':'none';
   document.getElementById('pbTab').style.display = tab==='playbooks'?'block':'none';
+  document.getElementById('faqTab').style.display = tab==='faqs'?'block':'none';
+  
+  var dash = document.getElementById('homeToggleDashboard');
+  if(dash) dash.style.display = (tab==='policies' && !activeFilter) ? 'block' : 'none';
+  
   document.querySelectorAll('.nitem').forEach(el=>el.classList.remove('on'));
   if(tab==='playbooks') renderPbGrid();
+  if(tab==='faqs') renderFaqPanelLayout();
   if(tab==='policies') render();
 }
 
@@ -531,10 +573,10 @@ function buildTagCloud(){
 function setTag(t){activeTag=t;buildTagCloud();render();}
 function setFilter(f,label){
   activeFilter=f;
-  document.querySelectorAll('.ftab').forEach(el=>el.classList.remove('on'));
-  var tabs=document.querySelectorAll('.ftab');
-  if(!f) tabs[0].classList.add('on');
-  else tabs.forEach(tab=>{if(tab.textContent.trim()===label)tab.classList.add('on');});
+  var dash = document.getElementById('homeToggleDashboard');
+  if(dash) {
+    dash.style.display = (f === null) ? 'block' : 'none';
+  }
   showTab('policies'); closeDD(); render();
 }
 
@@ -965,11 +1007,22 @@ function jumpTo(id){
 var ddTarget=null;
 function openDD(el,type){
   var menu=document.getElementById('ddMenu');
-  var items=type==='sales'?[['Sales Process','Sales Process'],['Sales Policy','Sales Policy']]:[['CS Process','CS Process'],['CS Policy','CS Policy']];
-  menu.innerHTML=items.map(function(pair){var l=pair[0],f=pair[1];return '<div class="dd-item" data-action="filter" data-filter="'+f+'" data-label="'+l+'">'+l+'</div>';}).join('');
+  var items=type==='sales' 
+    ? [['Sales Process','Sales Process'],['Sales Policy','Sales Policy'],['Playbooks','Playbooks']]
+    : [['CS Process','CS Process'],['CS Policy','CS Policy']];
+  
+  menu.innerHTML=items.map(function(pair){
+    var l=pair[0],f=pair[1];
+    if(f==='Playbooks') {
+      return '<div class="dd-item" onclick="showTab(\'playbooks\'); closeDD();">Playbooks</div>';
+    }
+    return '<div class="dd-item" data-action="filter" data-filter="'+f+'" data-label="'+l+'">'+l+'</div>';
+  }).join('');
+  
   var r=el.getBoundingClientRect();
   menu.style.display='block'; menu.style.top=r.bottom+'px'; menu.style.left=r.left+'px'; ddTarget=el;
 }
+
 function closeDD(){document.getElementById('ddMenu').style.display='none';ddTarget=null;}
 document.addEventListener('click',e=>{
   if(ddTarget&&!ddTarget.contains(e.target)&&!document.getElementById('ddMenu').contains(e.target)) closeDD();
@@ -994,6 +1047,31 @@ document.addEventListener('click', function(e) {
     updateCommentStatus(id, sel ? sel.value : 'pending', lnk ? lnk.value : '');
   }
 });
+  function renderFaqPanelLayout() {
+  var faqBox = document.getElementById('standardFaqContainer');
+  var raisedBox = document.getElementById('questionsRaisedContainer');
+  
+  // 1. Fill the Left Column with FAQ entries
+  var faqs = data.policies.filter(p => p.category === 'FAQs');
+  if(!faqs.length) {
+    faqBox.innerHTML = '<p class="empty">No standard FAQ articles created yet.</p>';
+  } else {
+    faqBox.innerHTML = faqs.map(p => `
+      <div class="pcard" style="padding: 16px; margin-bottom: 12px; background: #fff; border: 1px solid var(--line); border-radius: 8px;">
+        <h4 style="font-size:15px; font-weight:600; color:var(--plum-d); margin-bottom: 4px;">${esc(p.title)}</h4>
+        <div class="rich-content" style="font-size:13px; color:#2a1a1a;">${p.detailsHtml || ''}</div>
+      </div>
+    `).join('');
+  }
+  
+  // 2. Fill the Right Column with Questions Asked by the Team
+  var comments = data.comments || [];
+  if(!comments.length) {
+    raisedBox.innerHTML = '<p class="empty">No team questions raised yet.</p>';
+  } else {
+    raisedBox.innerHTML = comments.map(c => renderComment(c)).join('');
+  }
+}
 </script>
 </body>
 </html>
