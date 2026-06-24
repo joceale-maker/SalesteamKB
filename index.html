@@ -331,7 +331,7 @@ footer{background:var(--surface);border-top:1px solid var(--line);text-align:cen
     <div id="homeToggleDashboard" style="margin-bottom: 24px;">
   <p class="side-lbl">Main Topics</p>
   <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px;">
-    <div class="pb-card" onclick="setFilter('Sales Process','Sales Process')" style="border-left: 4px solid var(--plum); padding: 15px; background: #fff; cursor: pointer;">
+    <div class="pb-card" onclick="setFilter('Sales Process','Sales Process')" style="border-left: 4px solid var(--plum); padding: 15px; background: var(--surface); cursor: pointer;">
       <div class="pb-card-title" style="font-weight: bold; color: var(--plum-d);">Sales Processes</div>
       <div class="pb-card-steps" style="font-size: 13px; color: var(--muted);">View standard operating workflows</div>
     </div>
@@ -727,11 +727,37 @@ function openGeneralNote(){
     return;
   }
 
+  // Provide immediate visual confirmation that processing has started
+  console.log('Sending general note to backend...');
+  
+  api({
+    action: 'addComment',
+    policyId: 'general',
+    policyTitle: 'General (no specific policy)',
+    name: n,
+    comment: t,
+    dealName: '',
+    dealUrl: ''
+  })
+  .then(res => {
+    if (res.ok) {
+      alert('Thanks ' + n + '! Your note was saved to the database and Cel has been notified.');
+    } else {
+      alert('Error from server: ' + (res.error || 'Unknown database issue.'));
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    alert('Network error: Could not connect to the server. Please verify your App Script API URL is set up correctly.');
+  });
+}
+
 function deleteComment(cid) {
   if (!auth || auth.role !== 'admin') return;
   if (!confirm('Remove this question/note from the log permanently?')) return;
   
-  api({ action: 'updateComment', username: auth.username, password: auth.password, commentId: cid, status: 'closed', deletePermanently: true }, function(res) {
+  api({ action: 'updateComment', username: auth.username, password: auth.password, commentId: cid, status: 'closed', deletePermanently: true })
+  .then(res => {
     if (res.ok) {
       var idx = data.comments.findIndex(c => c.id === cid);
       if (idx >= 0) data.comments.splice(idx, 1);
@@ -918,7 +944,8 @@ function deletePolicy(pid) {
     password: auth.password, 
     policyId: pid, 
     deletePermanently: true 
-  }).then(res => {
+  })
+  .then(res => {
     if (res.ok) {
       alert('Policy successfully deleted.');
       loadData();
