@@ -769,31 +769,6 @@ function deleteComment(cid) {
     }
   });
 }
-  // Provide immediate visual confirmation that processing has started
-  console.log('Sending general note to backend...');
-  
-  api({
-    action: 'addComment',
-    policyId: 'general',
-    policyTitle: 'General (no specific policy)',
-    name: n,
-    comment: t,
-    dealName: '',
-    dealUrl: ''
-  })
-  .then(res => {
-    if (res.ok) {
-      alert('Thanks ' + n + '! Your note was saved to the database and Cel has been notified.');
-    } else {
-      alert('Error from server: ' + (res.error || 'Unknown database issue.'));
-    }
-  })
-  .catch(err => {
-    console.error(err);
-    alert('Network error: Could not connect to the server. Please verify your App Script API URL is set up correctly.');
-  });
-}
-
 // ── RICH EDITOR ──
 function buildToolbar(tbId, eaId){
   var tb=document.getElementById(tbId);
